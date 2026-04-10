@@ -1,1 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICER French Language Course with Tam</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#002395;--red:#ED2939;--mid:#185FA5;--dark:#0C447C;
+  --lt:#E6F1FB;--amber-bg:#FAEEDA;--amber-b:#BA7517;--amber-dk:#412402;
+  --green-bg:#EAF3DE;--green-b:#3B6D11;--green-dk:#173404;
+  --red-bg:#FCEBEB;--red-b:#A32D2D;--red-dk:#501313;
+  --gray:#f7f8fa;--border:#e0e0e0;--text:#1a1a2e;--muted:#666;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
+
+/* ── NAV ── */
+#topbar{background:var(--blue);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.logo{color:#fff;font-size:17px;font-weight:700;letter-spacing:.02em}
+.logo span{color:#ED2939}
+.flag-bar{display:flex;height:3px;width:36px;border-radius:2px;overflow:hidden;margin-right:10px}
+.topnav{display:flex;align-items:center;gap:12px}
+#login-btn{padding:6px 16px;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:20px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s}
+#login-btn:hover{background:rgba(255,255,255,.15)}
+#login-btn.on{background:var(--red);border-color:var(--red)}
+
+/* ── LOGIN MODAL ── */
+#modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,35,149,.55);z-index:200;align-items:center;justify-content:center}
+#modal-wrap.open{display:flex}
+#modal{background:#fff;border-radius:14px;padding:2rem;width:340px;max-width:94vw}
+#modal h2{font-size:18px;font-weight:700;color:var(--blue);margin-bottom:.25rem}
+#modal p{font-size:13px;color:var(--muted);margin-bottom:1.25rem}
+.mfield{margin-bottom:1rem}
+.mfield label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:600;letter-spacing:.04em}
+.mfield input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border .2s}
+.mfield input:focus{border-color:var(--mid)}
+#login-err{font-size:12px;color:var(--red);margin-bottom:.75rem;display:none}
+#do-login{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+#do-login:hover{background:var(--dark)}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);margin-top:-4px}
+
+/* ── HERO ── */
+#hero{background:var(--blue);padding:2.5rem 1.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+#hero::after{content:'"';position:absolute;right:2rem;top:-.5rem;font-size:120px;color:rgba(255,255,255,.07);font-family:Georgia,serif;pointer-events:none}
+.hero-flag{display:flex;height:4px;border-radius:3px;overflow:hidden;width:80px;margin:0 auto 1.2rem}
+#hero h1{color:#fff;font-size:clamp(22px,4vw,32px);font-weight:800;margin-bottom:.4rem}
+#hero p{color:#85B7EB;font-size:15px;max-width:520px;margin:0 auto .9rem;line-height:1.6}
+.hero-sub{display:inline-block;background:rgba(255,255,255,.12);color:#fff;font-size:12px;padding:5px 16px;border-radius:20px;letter-spacing:.04em}
+
+/* ── WEEK SELECTOR ── */
+#week-bar{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:56px;z-index:90}
+.wb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .2s}
+.wb:hover:not(.on){background:var(--lt);border-color:var(--mid);color:var(--dark)}
+.wb.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ── MAIN CONTENT ── */
+#main{max-width:900px;margin:1.5rem auto;padding:0 1rem 3rem}
+
+/* ── SHEET ── */
+.sheet{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.sheet-head{background:var(--blue);padding:1.25rem 1.5rem 1rem}
+.sh-flag{display:flex;height:4px;border-radius:2px;overflow:hidden;margin-bottom:.85rem}
+.sh-badge{font-size:10px;letter-spacing:.1em;color:#85B7EB;font-weight:700;margin-bottom:4px}
+.sh-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:3px;line-height:1.25}
+.sh-loc{font-size:11.5px;color:#85B7EB;font-style:italic}
+.sh-body{padding:1.4rem 1.5rem}
+
+/* ── TABS ── */
+.tab-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1.25rem;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab{padding:8px 16px;border-radius:8px 8px 0 0;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .15s;margin-bottom:-2px;border-bottom:2px solid transparent}
+.tab:hover:not(.on){background:var(--lt);color:var(--dark)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);background:#fff}
+
+.sec-label{font-size:10px;letter-spacing:.09em;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:.55rem}
+
+/* ── FLIP CARDS ── */
+.flip-hint{font-size:11.5px;color:#aaa;margin-bottom:.75rem}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:1.5rem}
+.card{perspective:700px;height:72px;cursor:pointer}
+.cinner{width:100%;height:100%;transition:transform .42s;transform-style:preserve-3d;border-radius:9px}
+.card.f .cinner{transform:rotateY(180deg)}
+.cfront,.cback{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:9px;padding:9px 11px 9px 14px;border:1.5px solid #c8ddf5;display:flex;flex-direction:column;justify-content:center}
+.cfront{background:var(--lt);border-left:3.5px solid var(--mid)}
+.cback{background:var(--blue);transform:rotateY(180deg);border-color:#1a3d80;border-left-color:var(--red)}
+.cfr{font-size:14.5px;font-weight:700;color:var(--dark);line-height:1.2}
+.cpron{font-size:10px;color:#378ADD;font-style:italic;margin-top:2px}
+.cen{font-size:13px;color:#fff;font-weight:600;line-height:1.3}
+.cbh{font-size:9px;color:#85B7EB;margin-top:3px}
+
+/* ── QUIZ ── */
+.q-item{background:var(--gray);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.75rem;border:1.5px solid transparent;transition:border .2s}
+.q-item.correct{border-color:var(--green-b);background:var(--green-bg)}
+.q-item.wrong{border-color:var(--red-b);background:var(--red-bg)}
+.q-text{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:.75rem}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.05em;margin-bottom:.3rem}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-family:inherit;text-align:left;transition:all .18s;line-height:1.4}
+.opt:hover:not([disabled]){background:var(--lt);border-color:var(--mid)}
+.opt.ok{background:var(--green-bg);border-color:var(--green-b);color:var(--green-dk);font-weight:700;pointer-events:none}
+.opt.no{background:var(--red-bg);border-color:var(--red-b);color:var(--red-dk);pointer-events:none}
+.q-fb{font-size:12.5px;margin-top:.6rem;font-weight:600}
+.q-fb.ok{color:var(--green-dk)}
+.q-fb.no{color:var(--red-dk)}
+.score-bar{background:var(--lt);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:13px;color:var(--dark);font-weight:600;text-align:center}
+
+/* ── MATCHING GAME ── */
+.game-inst{font-size:13px;color:var(--muted);margin-bottom:.9rem}
+.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.game-col h4{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:6px;text-align:center}
+.gitem{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;background:#fff;cursor:pointer;font-size:13px;line-height:1.4;text-align:center;transition:all .18s;min-height:46px;display:flex;align-items:center;justify-content:center}
+.gitem:hover:not(.mat):not(.err){background:var(--lt);border-color:var(--mid)}
+.gitem.sel{background:var(--lt);border-color:var(--blue);color:var(--dark);font-weight:700}
+.gitem.mat{background:var(--green-bg);border-color:var(--green-b);color:var(--green-dk);font-weight:700;pointer-events:none}
+.gitem.err{background:var(--red-bg);border-color:var(--red-b);pointer-events:none}
+.game-status{text-align:center;margin-top:.75rem;font-size:13px;color:var(--dark);font-weight:600}
+.reset-btn{display:block;margin:.6rem auto 0;padding:6px 18px;border:1.5px solid var(--border);border-radius:20px;background:#fff;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit}
+.reset-btn:hover{background:var(--lt)}
+
+/* ── POEM ── */
+.poem-box{background:var(--amber-bg);border-radius:10px;padding:1.1rem 1.2rem;border-left:4px solid var(--amber-b);margin-bottom:1rem}
+.poem-fr{font-size:15px;font-weight:700;color:var(--amber-dk);line-height:2}
+.poem-en{font-size:12px;color:#854F0B;font-style:italic;display:block;line-height:1.5;margin-bottom:6px}
+.perf-note{background:var(--lt);border-radius:8px;padding:.75rem 1rem;font-size:12.5px;color:var(--dark);font-style:italic;border-left:3px solid var(--mid)}
+
+/* ── TIP & CHALLENGE ── */
+.tip-box{background:var(--green-bg);border-radius:10px;padding:1rem 1.1rem;border-left:4px solid var(--green-b);margin-bottom:1rem}
+.tip-title{font-size:10px;font-weight:700;color:var(--green-dk);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.4rem}
+.tip-text{font-size:13.5px;color:var(--green-dk);line-height:1.75}
+.ch-box{background:var(--red-bg);border-radius:10px;padding:1rem 1.1rem;border-left:4px solid var(--red-b)}
+.ch-title{font-size:10px;font-weight:700;color:var(--red-dk);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.4rem}
+.ch-text{font-size:13.5px;color:var(--red-dk);line-height:1.75}
+
+/* ── VOCAB ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.vcard{background:var(--lt);border-radius:9px;padding:.7rem 1rem;border:1.5px solid #c8ddf5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.vfr{font-weight:700;font-size:14px;color:var(--dark)}
+.ven{font-size:12px;color:var(--muted);text-align:right}
+
+/* ── FOOTER ── */
+#footer{background:var(--blue);padding:1.25rem 1.5rem;text-align:center;margin-top:3rem}
+#footer p{color:#85B7EB;font-size:12px}
+#footer strong{color:#fff}
+
+/* ── RESPONSIVE ── */
+@media(max-width:520px){
+  .opts{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr 1fr}
+  .game-grid{grid-template-columns:1fr 1fr}
+  #week-bar{top:56px;padding:.5rem .75rem}
+  .sh-body{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="flag-bar">
+      <div style="flex:1;background:#002395"></div>
+      <div style="flex:1;background:#fff"></div>
+      <div style="flex:1;background:#ED2939"></div>
+    </div>
+    <div class="logo">ICER <span>French</span> <span style="font-weight:400;font-size:13px;color:#85B7EB;letter-spacing:.01em">by Tam</span></div>
+  </div>
+  <div class="topnav">
+    <span id="user-label" style="color:#85B7EB;font-size:13px;display:none"></span>
+    <button id="login-btn" onclick="toggleLogin()">Teacher login</button>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="modal-wrap">
+  <div id="modal">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <h2>Teacher login</h2>
+    <p>Sign in to access and share all lessons with your students.</p>
+    <div class="mfield">
+      <label>USERNAME</label>
+      <input id="uname" type="text" placeholder="icer_teacher" autocomplete="username">
+    </div>
+    <div class="mfield">
+      <label>PASSWORD</label>
+      <input id="pw" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div id="login-err">Incorrect username or password. Try: icer_teacher / french2024</div>
+    <button id="do-login" onclick="doLogin()">Sign in</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-flag">
+    <div style="flex:1;background:#002395"></div>
+    <div style="flex:1;background:rgba(255,255,255,.4)"></div>
+    <div style="flex:1;background:#ED2939"></div>
+  </div>
+  <h1>ICER French Language Course</h1>
+  <p style="color:#ED2939;font-size:13px;font-weight:700;letter-spacing:.06em;margin-bottom:.35rem;margin-top:-.2rem">by Tam</p>
+  <p>10 weeks of interactive phrase sheets — stories, flip cards, quizzes, matching games, songs and cultural tips. Speak French from Day 1.</p>
+  <span class="hero-sub">BEGINNERS &nbsp;&bull;&nbsp; ADULTS &nbsp;&bull;&nbsp; 1 HOUR PER WEEK</span>
+</div>
+
+<!-- WEEK BAR -->
+<div id="week-bar"></div>
+
+<!-- MAIN -->
+<div id="main"></div>
+
+<!-- FOOTER -->
+<div id="footer">
+  <p><strong>ICER French Language Course by Tam</strong> &nbsp;&bull;&nbsp; Beginners &nbsp;&bull;&nbsp; 10 Weeks &nbsp;&bull;&nbsp; Speak French from Day 1</p>
+  <p style="margin-top:4px;font-size:11px">&ldquo;Venez me joindre ici &agrave; ICER &mdash; je vous accompagnerai.&rdquo; &mdash; Tam</p>
+</div>
+
+<script>
+/* ═══════════════════ DATA ═══════════════════ */
+const WEEKS=[
+{n:1,theme:"Greetings & Introductions",loc:"Caf\u00e9 de Flore, Saint-Germain-des-Pr\u00e9s, Paris",
+ phrases:[["Bonjour !","Bohn-zhoor","Hello! / Good morning"],["Bonsoir !","Bohn-swahr","Good evening!"],["Je m\u2019appelle\u2026","Zhuh mah-pel","My name is\u2026"],["Comment allez-vous\u202f?","Koh-mahn tah-lay voo","How are you? (formal)"],["Je vais bien, merci.","Zhuh vay byahn, mair-see","I\u2019m well, thank you."],["Et vous\u202f?","Ay voo","And you?"],["Au revoir !","Oh ruh-vwar","Goodbye!"],["Enchant\u00e9(e) !","Ahn-shahn-tay","Pleased to meet you!"]],
+ quiz:[{q:"How do you say \u2018Good morning\u2019 in French?",o:["Bonsoir","Bonjour","Au revoir","Merci","Bienvenue"],c:1},{q:"What does \u2018Je m\u2019appelle Marie\u2019 mean?",o:["I am fine","My name is Marie","I live in Paris","Nice to meet you","I am from Paris"],c:1},{q:"How do you say \u2018Thank you\u2019?",o:["S\u2019il vous pla\u00eet","Pardon","Merci","Bienvenue","Bonjour"],c:2},{q:"Which phrase means \u2018Goodbye\u2019?",o:["Bonjour","Bonsoir","Au revoir","Comment allez-vous?","Tr\u00e8s bien"],c:2},{q:"What does \u2018S\u2019il vous pla\u00eet\u2019 mean?",o:["Thank you","Sorry","Goodbye","Please","Hello"],c:3}],
+ game:{in:"Match each situation to the correct French phrase.",pairs:[["Morning at 9am","Bonjour !"],["Evening at 9pm","Bonsoir !"],["Leaving the room","Au revoir !"],["Introducing yourself","Je m\u2019appelle\u2026"],["Saying thank you","Merci !"]]},
+ poem:{ti:"Chanson du Bonjour",no:"Sing to a simple 4/4 melody \u2014 slow and warm. Clap on every \u2018Bonjour\u2019!",li:[["Bonjour le soleil,","Hello sunshine,"],["Bonjour les amis,","Hello friends,"],["Je m\u2019appelle Marie,","My name is Marie,"],["Bonjour la vie !","Hello, life!"]]},
+ tip:"In France, always say Bonjour when entering a shop, caf\u00e9 or room. It is considered rude to begin a conversation without greeting first. Even strangers in a lift will say it!",
+ challenge:"Greet three people in French today \u2014 one in the morning (Bonjour) and one in the evening (Bonsoir). Notice how natural it feels by the third time."},
+
+{n:2,theme:"Numbers & Colours",loc:"March\u00e9 de la Croix-Rousse, Lyon",
+ phrases:[["Un, deux, trois","Uhn, duh, twah","One, two, three"],["Quatre, cinq, six","Katr, sank, sees","Four, five, six"],["Sept, huit, neuf, dix","Set, weet, nuhf, dees","Seven, eight, nine, ten"],["Combien\u202f?","Kohm-byahn","How much / how many?"],["Rouge","Roozh","Red"],["Bleu / Bleue","Bluh","Blue"],["Vert / Verte","Vair","Green"],["Jaune","Zhohn","Yellow"]],
+ quiz:[{q:"How do you say \u2018five\u2019 in French?",o:["Quatre","Six","Cinq","Sept","Huit"],c:2},{q:"What colour is \u2018rouge\u2019?",o:["Blue","Red","Green","Yellow","White"],c:1},{q:"What does \u2018Combien?\u2019 mean?",o:["Where?","When?","How much?","Who?","What?"],c:2},{q:"How do you say \u2018ten\u2019?",o:["Huit","Neuf","Six","Dix","Sept"],c:3},{q:"What colour is \u2018jaune\u2019?",o:["Green","Blue","Red","Purple","Yellow"],c:4}],
+ game:{in:"Match the number or colour to its French word.",pairs:[["3 apples","Trois"],["7 days","Sept"],["Colour of blood \u2014 Red","Rouge"],["Colour of the sun \u2014 Yellow","Jaune"],["Colour of the sea \u2014 Blue","Bleu"]]},
+ poem:{ti:"Comptine des couleurs",no:"A children\u2019s counting rhyme \u2014 perfect for memorising numbers and colours. Clap a steady beat!",li:[["Un, c\u2019est rouge comme une rose,","One, red like a rose,"],["Deux, c\u2019est bleu comme le ciel,","Two, blue like the sky,"],["Trois, c\u2019est vert \u2014 une pelouse,","Three, green like a lawn,"],["Quatre, c\u2019est jaune \u2014 le miel.","Four, yellow like honey."]]},
+ tip:"At French markets, prices are always spoken clearly. Practice counting coins out loud: un euro, deux euros, trois euros. Market vendors love hearing tourists try!",
+ challenge:"Count all the coloured objects in the room around you \u2014 in French. How many rouge objects can you find? Bleu? Vert? Jaune?"},
+
+{n:3,theme:"Caf\u00e9 & Food",loc:"Le Petit Zinc, Montmartre, Paris",
+ phrases:[["Un caf\u00e9, s\u2019il vous pla\u00eet","Uhn kah-fay, seel voo play","A coffee, please"],["Un croissant","Uhn kwah-sahn","A croissant"],["Je voudrais\u2026","Zhuh voo-dray","I would like\u2026"],["C\u2019est combien\u202f?","Say kohm-byahn","How much is it?"],["L\u2019addition, s\u2019il vous pla\u00eet","Lah-dee-syohn seel voo play","The bill, please"],["La carte","Lah kart","The menu"],["Du beurre","D\u00fc buhr","Some butter"],["Avec plaisir !","Ah-vek play-zeer","With pleasure!"]],
+ quiz:[{q:"How do you order \u2018a coffee\u2019 in French?",o:["Un th\u00e9","Un caf\u00e9","Un jus","Du pain","De l\u2019eau"],c:1},{q:"What does \u2018Je voudrais\u2019 mean?",o:["I don\u2019t want","I have","I would like","I need","I eat"],c:2},{q:"How do you ask for the bill?",o:["La carte, s\u2019il vous pla\u00eet","C\u2019est combien?","L\u2019addition, s\u2019il vous pla\u00eet","Au revoir","Je voudrais payer"],c:2},{q:"What is \u2018du beurre\u2019?",o:["Some wine","Some water","Some bread","Some butter","Some jam"],c:3},{q:"What does \u2018La carte\u2019 mean?",o:["The bill","The waiter","The menu","The coffee","The table"],c:2}],
+ game:{in:"Match the clue to its French caf\u00e9 word.",pairs:[["Strong espresso in a small cup","Un caf\u00e9"],["Flaky buttery pastry","Un croissant"],["Spread this on your bread","Du beurre"],["Ask this to see the dishes","La carte"],["Say this to pay and leave","L\u2019addition"]]},
+ poem:{ti:"\u00c0 la boulangerie",no:"Sing gently like a morning lullaby. Emphasise the rhythm on \u2018caf\u00e9\u2019 and \u2018croissant\u2019.",li:[["Un caf\u00e9, s\u2019il vous pla\u00eet,","A coffee, please,"],["Chaud et fort le matin.","Hot and strong in the morning."],["Un croissant au beurre,","A butter croissant,"],["Dor\u00e9 et tr\u00e8s fin.","Golden and very fine."]]},
+ tip:"In France, un caf\u00e9 means a small espresso. For a large white coffee ask for un caf\u00e9 cr\u00e8me. Never ask for un caf\u00e9 au lait in a caf\u00e9 \u2014 that is considered a home drink!",
+ challenge:"Order your next coffee or tea \u2014 even at home \u2014 in French. Say: \u2018Je voudrais un caf\u00e9, s\u2019il vous pla\u00eet.\u2019 Then add: \u2018C\u2019est combien?\u2019"},
+
+{n:4,theme:"Family & Relationships",loc:"A farmhouse near Aix-en-Provence",
+ phrases:[["Ma m\u00e8re","Mah mair","My mother"],["Mon p\u00e8re","Mohn pair","My father"],["Ma s\u0153ur","Mah suhr","My sister"],["Mon fr\u00e8re","Mohn frair","My brother"],["Ma fille","Mah fee-yuh","My daughter"],["Mon fils","Mohn fees","My son"],["Mon mari / Ma femme","Mohn mah-ree / Mah fam","My husband / My wife"],["Les enfants","Lay zahn-fahn","The children"]],
+ quiz:[{q:"How do you say \u2018my mother\u2019 in French?",o:["Ma femme","Ma fille","Ma m\u00e8re","Ma s\u0153ur","Ma tante"],c:2},{q:"What does \u2018les enfants\u2019 mean?",o:["The parents","The children","The cousins","The family","The grandparents"],c:1},{q:"How do you say \u2018my brother\u2019?",o:["Mon p\u00e8re","Mon fils","Mon mari","Mon fr\u00e8re","Mon oncle"],c:3},{q:"What is \u2018ma femme\u2019?",o:["My daughter","My wife","My sister","My mother","My aunt"],c:1},{q:"How do you say \u2018my daughter\u2019?",o:["Ma s\u0153ur","Ma m\u00e8re","Ma fille","Ma femme","Ma cousine"],c:2}],
+ game:{in:"Match the description to the correct French family word.",pairs:[["She gave birth to you","Ma m\u00e8re"],["He is your male parent","Mon p\u00e8re"],["Your parents\u2019 daughter","Ma fille"],["Your parents\u2019 son","Mon fils"],["She shares your parents","Ma s\u0153ur"]]},
+ poem:{ti:"Ma famille",no:"A gentle poem \u2014 each line has a natural 4-beat rhythm. Read aloud slowly before memorising.",li:[["Ma m\u00e8re chante le soir,","My mother sings in the evening,"],["Mon p\u00e8re lit un livre.","My father reads a book."],["Ma s\u0153ur joue du piano,","My sister plays the piano,"],["Mon fr\u00e8re court \u2014 un li\u00e8vre.","My brother runs like a hare."]]},
+ tip:"French family gatherings (les repas en famille) are sacred. Sunday lunch can last three hours. If invited, bring wine or flowers \u2014 but not chrysanthemums, which are for funerals!",
+ challenge:"Introduce your family in French \u2014 even to yourself in a mirror. \u2018Voici ma famille. Ma m\u00e8re s\u2019appelle\u2026 Mon p\u00e8re s\u2019appelle\u2026\u2019 Say it until it flows."},
+
+{n:5,theme:"Directions & Transport",loc:"Near the Louvre, Paris",
+ phrases:[["Tout droit","Too dwah","Straight ahead"],["A gauche","\u00c0 gohsh","To the left"],["A droite","\u00c0 dwat","To the right"],["Tournez\u202f!","Toor-nay","Turn!"],["Excusez-moi\u2026","Ex-k\u00fc-zay mwah","Excuse me\u2026"],["O\u00f9 est\u2026\u202f?","Oo ay","Where is\u2026?"],["La gare","Lah gar","The train station"],["Le m\u00e9tro","Luh may-tro","The underground"]],
+ quiz:[{q:"How do you say \u2018straight ahead\u2019?",o:["\u00c0 gauche","\u00c0 droite","Tout droit","En face","Tournez"],c:2},{q:"What does \u2018tournez \u00e0 gauche\u2019 mean?",o:["Turn right","Go straight","Turn left","Stop here","Cross the bridge"],c:2},{q:"What is \u2018la gare\u2019?",o:["The airport","The train station","The bus stop","The hotel","The museum"],c:1},{q:"What does \u2018en face de\u2019 mean?",o:["Far from","Behind","Near","Opposite","Next to"],c:3},{q:"How do you say \u2018the bridge\u2019?",o:["La rue","La gare","Le m\u00e9tro","Le pont","Le carrefour"],c:3}],
+ game:{in:"Match the clue to its French direction word.",pairs:[["Going straight forward","Tout droit"],["Heading to the left","\u00c0 gauche"],["Heading to the right","\u00c0 droite"],["Cross this over the river","Le pont"],["Underground train network","Le m\u00e9tro"]]},
+ poem:{ti:"La rue de Paris",no:"Mime the directions as you read \u2014 point left, right, ahead. It builds muscle memory for real conversations!",li:[["Tout droit, puis \u00e0 gauche,","Straight ahead, then left,"],["C\u2019est le chemin pour chez moi.","That\u2019s the way to my home."],["Tournez \u00e0 droite ici,","Turn right here,"],["Le mus\u00e9e est en face.","The museum is opposite."]]},
+ tip:"Parisians are happy to help with directions \u2014 they just speak fast! Always start with \u2018Excusez-moi\u2019 and smile. If you don\u2019t understand, say \u2018Plus lentement, s\u2019il vous pla\u00eet\u2019 (More slowly, please).",
+ challenge:"Draw a simple map of your route to work or the shops. Label each turn in French: tout droit, \u00e0 gauche, \u00e0 droite. Then narrate the route out loud."},
+
+{n:6,theme:"Shopping & Clothes",loc:"March\u00e9 aux Puces de Saint-Ouen, Paris",
+ phrases:[["C\u2019est combien\u202f?","Say kohm-byahn","How much is it?"],["C\u2019est cher","Say shair","It\u2019s expensive"],["C\u2019est bon march\u00e9","Say bohn mar-shay","It\u2019s good value"],["Quelle taille\u202f?","Kel tie-yuh","What size?"],["C\u00e7a me va\u202f?","Sah muh vah","Does it suit me?"],["La robe","Lah rohb","The dress"],["Les chaussures","Lay shoh-s\u00fchr","The shoes"],["Je prends \u00e7a !","Zhuh prahn sah","I\u2019ll take it!"]],
+ quiz:[{q:"What is \u2018une robe\u2019?",o:["A shirt","A dress","Trousers","A coat","A skirt"],c:1},{q:"How do you say \u2018it\u2019s expensive\u2019?",o:["C\u2019est joli","C\u2019est bon march\u00e9","C\u2019est grand","C\u2019est cher","C\u2019est petit"],c:3},{q:"What does \u2018Quelle taille?\u2019 mean?",o:["What colour?","What price?","What size?","What style?","What brand?"],c:2},{q:"What are \u2018les chaussures\u2019?",o:["Gloves","Hats","Shoes","Socks","Scarves"],c:2},{q:"What does \u2018\u00c7a me va?\u2019 mean?",o:["How much is it?","What size?","Does it suit me?","Can I try it?","Is it on sale?"],c:2}],
+ game:{in:"Match the clue to the French clothing word.",pairs:[["Worn to a party","La robe"],["Button-up top","La chemise"],["On your feet every day","Les chaussures"],["Two-legged lower garment","Le pantalon"],["Say this to buy it","Je prends \u00e7a !"]]},
+ poem:{ti:"La marchande de mode",no:"Read with flair \u2014 pause before each punchline. This is Parisian fashion culture!",li:[["Une robe bleue dans la vitrine,","A blue dress in the window,"],["Des chaussures dor\u00e9es au soleil,","Golden shoes in the sun,"],["C\u2019est cher\u202f? Non \u2014 c\u2019est divine\u202f!","Expensive? No \u2014 it\u2019s divine!"],["La mode, c\u2019est l\u2019amour.","Fashion is love."]]},
+ tip:"Bargaining (marchander) is fine at flea markets (march\u00e9s aux puces) but not in regular shops. At the March\u00e9 aux Puces, always start lower than you want to pay \u2014 it is part of the joy!",
+ challenge:"Go window-shopping online \u2014 pick three items and describe them in French: \u2018C\u2019est une robe rouge. C\u2019est cher \u2014 soixante euros.\u2019 Say the price out loud."},
+
+{n:7,theme:"Weather & Seasons",loc:"A village in Normandy",
+ phrases:[["Il fait beau","Eel fay boh","The weather is nice"],["Il fait froid","Eel fay fwah","It is cold"],["Il fait chaud","Eel fay shoh","It is hot"],["Il pleut","Eel pluh","It is raining"],["Il neige","Eel nezh","It is snowing"],["Il fait du vent","Eel fay d\u00fc vahn","It is windy"],["Le printemps / L\u2019\u00e9t\u00e9","Luh prahn-tahn / Lay-tay","Spring / Summer"],["L\u2019automne / L\u2019hiver","Loh-tohn / Lee-vair","Autumn / Winter"]],
+ quiz:[{q:"What does \u2018Il pleut\u2019 mean?",o:["It\u2019s sunny","It\u2019s cold","It\u2019s raining","It\u2019s snowing","It\u2019s windy"],c:2},{q:"How do you say \u2018It is hot\u2019?",o:["Il fait froid","Il fait chaud","Il fait beau","Il neige","Il fait du vent"],c:1},{q:"What season is \u2018l\u2019hiver\u2019?",o:["Summer","Spring","Autumn","Winter","Monsoon"],c:3},{q:"How do you say \u2018It\u2019s windy\u2019?",o:["Il fait du vent","Il fait froid","Il pleut","Il neige","Il fait beau"],c:0},{q:"What does \u2018Il neige\u2019 mean?",o:["It\u2019s raining","It\u2019s sunny","It\u2019s snowing","It\u2019s cold","It\u2019s windy"],c:2}],
+ game:{in:"Match the weather clue to its French phrase.",pairs:[["Blue skies, sunny day","Il fait beau"],["Bring your umbrella","Il pleut"],["White flakes are falling","Il neige"],["Hold onto your hat","Il fait du vent"],["Turn the heating on","Il fait froid"]]},
+ poem:{ti:"Les quatre saisons",no:"Read each season with a different mood \u2014 joyful, warm, melancholy, sleepy. Act it out!",li:[["Le printemps chante et fleurit,","Spring sings and blooms,"],["L\u2019\u00e9t\u00e9 brille et sourit.","Summer shines and smiles."],["L\u2019automne pleure ses feuilles,","Autumn weeps its leaves,"],["L\u2019hiver dort sous sa couverture.","Winter sleeps."]]},
+ tip:"The French are passionate about weather talk. \u2018Quel temps fait-il?\u2019 (What\u2019s the weather like?) is a perfect conversation opener with anyone \u2014 shopkeepers, neighbours, strangers at a bus stop.",
+ challenge:"Every morning this week, look outside and say the weather in French first. \u2018Il fait beau aujourd\u2019hui!\u2019 or \u2018Il pleut encore\u2026\u2019 Make it a daily habit."},
+
+{n:8,theme:"Daily Routines",loc:"Along the Garonne Quays, Bordeaux",
+ phrases:[["Je me l\u00e8ve","Zhuh muh lev","I get up"],["Je me douche","Zhuh muh doosh","I shower"],["Je m\u2019habille","Zhuh mah-bee-yuh","I get dressed"],["Je prends le petit-d\u00e9jeuner","Zhuh prahn luh ptee day-zhuh-nay","I have breakfast"],["Je travaille","Zhuh trah-vye","I work"],["Je rentre","Zhuh rahn-truh","I go home"],["Je me couche","Zhuh muh koosh","I go to bed"],["A quelle heure\u202f?","Ah kel uhr","At what time?"]],
+ quiz:[{q:"What does \u2018Je me l\u00e8ve\u2019 mean?",o:["I go to bed","I get up","I shower","I eat","I dress"],c:1},{q:"How do you say \u2018I work\u2019?",o:["Je rentre","Je dors","Je travaille","Je mange","Je cours"],c:2},{q:"What does \u2018Je me couche\u2019 mean?",o:["I get dressed","I wake up","I go to bed","I eat breakfast","I shower"],c:2},{q:"How do you ask \u2018At what time?\u2019",o:["Pourquoi?","\u00c0 quelle heure?","Comment?","Combien?","O\u00f9?"],c:1},{q:"What does \u2018Je rentre\u2019 mean?",o:["I leave","I arrive","I go home","I work","I sleep"],c:2}],
+ game:{in:"Match each clue to its daily routine phrase.",pairs:[["Alarm just rang \u2014 time to rise","Je me l\u00e8ve"],["Standing under running water","Je me douche"],["Putting on your clothes","Je m\u2019habille"],["Finally, pillow time","Je me couche"],["Heading back to the house","Je rentre"]]},
+ poem:{ti:"Ma journ\u00e9e",no:"Read the first verse quickly \u2014 a busy morning. Then slow right down for the calm evening verse.",li:[["Je me l\u00e8ve, le soleil aussi,","I get up, the sun too,"],["Je me douche, l\u2019eau est froide\u202f!","I shower \u2014 the water\u2019s cold!"],["Je m\u2019habille \u2014 vite, vite, vite,","I dress \u2014 quick, quick, quick,"],["Je prends mon caf\u00e9 \u2014 et voil\u00e0\u202f!","Coffee \u2014 and there we go!"]]},
+ tip:"The French morning ritual is precious. Le petit-d\u00e9jeuner is typically light: a tartine (bread with butter and jam) and a caf\u00e9 au lait. Lunch (le d\u00e9jeuner) is the main meal \u2014 often one to two hours long!",
+ challenge:"Narrate your entire morning routine in French as it happens. While showering: \u2018Je me douche.\u2019 While dressing: \u2018Je m\u2019habille.\u2019 It feels silly \u2014 and it works brilliantly."},
+
+{n:9,theme:"Hobbies & Leisure",loc:"Riverside Parks, Bordeaux",
+ phrases:[["Je lis","Zhuh lee","I read"],["J\u2019\u00e9coute de la musique","Zhay-koot duh lah m\u00fc-zeek","I listen to music"],["Je joue de la guitare","Zhuh zhoo duh lah gee-tar","I play guitar"],["Je peins","Zhuh pahn","I paint"],["Je cuisine","Zhuh kwee-zeen","I cook"],["Je me prom\u00e8ne","Zhuh muh proh-men","I go for a walk"],["J\u2019adore\u2026","Zhah-dor","I love\u2026"],["Le week-end","Luh wee-kend","The weekend"]],
+ quiz:[{q:"How do you say \u2018I read\u2019?",o:["Je cuisine","Je lis","Je peins","Je joue","Je cours"],c:1},{q:"What does \u2018J\u2019adore la musique\u2019 mean?",o:["I hate music","I play music","I love music","I make music","I write music"],c:2},{q:"How do you say \u2018I cook\u2019?",o:["Je mange","Je lis","Je cuisine","Je cours","Je dors"],c:2},{q:"What does \u2018Je me prom\u00e8ne\u2019 mean?",o:["I drive","I swim","I sleep","I go for a walk","I cycle"],c:3},{q:"How do you say \u2018I paint\u2019?",o:["Je lis","Je joue","Je peins","Je cuisine","Je chante"],c:2}],
+ game:{in:"Match the clue to its French hobby phrase.",pairs:[["Turning pages of a novel","Je lis"],["Brush on canvas","Je peins"],["Chopping and stirring at the stove","Je cuisine"],["Headphones on \u2014 lost in sound","J\u2019\u00e9coute de la musique"],["Strolling along a riverside path","Je me prom\u00e8ne"]]},
+ poem:{ti:"Mon week-end",no:"Sing as a slow waltz \u2014 3/4 time. The rhythm matches naturally. Perfect for a Saturday evening!",li:[["Le samedi, je lis au soleil,","Saturday, I read in the sun,"],["Le dimanche, je peins en paix.","Sunday, I paint in peace."],["J\u2019adore cuisiner le soir,","I love cooking in the evening,"],["Mon week-end, mon petit tr\u00e9sor.","My weekend, my little treasure."]]},
+ tip:"The French take leisure seriously \u2014 \u2018le droit au repos\u2019 (the right to rest) is a cultural value. Weekends are for family, food, and slow walks. Do not call a French colleague on a Sunday!",
+ challenge:"Describe your perfect weekend in French \u2014 out loud or in writing. \u2018Le samedi, je\u2026 Le dimanche, j\u2019adore\u2026\u2019 Use at least five phrases from this sheet."},
+
+{n:10,theme:"Travel & Making Plans",loc:"Paris to Nice \u2014 Bon voyage\u202f!",
+ phrases:[["Je voudrais aller \u00e0\u2026","Zhuh voo-dray ah-lay ah","I would like to go to\u2026"],["On part quand\u202f?","Ohn par kahn","When do we leave?"],["Le billet","Luh bee-yay","The ticket"],["La plage","Lah plazh","The beach"],["Le passeport","Luh pas-por","The passport"],["La valise","Lah vah-leez","The suitcase"],["Bon voyage\u202f!","Bohn vwah-yazh","Have a good trip!"],["C\u2019est magnifique\u202f!","Say mah-nyee-feek","It\u2019s magnificent!"]],
+ quiz:[{q:"How do you say \u2018I would like to go to Nice\u2019?",o:["Je vais \u00e0 Nice","Je voudrais aller \u00e0 Nice","J\u2019aime Nice","Je pars pour Nice","J\u2019adore Nice"],c:1},{q:"What is \u2018la plage\u2019?",o:["The hotel","The airport","The beach","The station","The town"],c:2},{q:"What does \u2018Bon voyage!\u2019 mean?",o:["Good evening!","Welcome!","Have a good trip!","See you soon!","Goodbye!"],c:2},{q:"How do you say \u2018the suitcase\u2019?",o:["Le billet","La valise","Le passeport","L\u2019h\u00f4tel","La plage"],c:1},{q:"What does \u2018On part quand?\u2019 mean?",o:["Where are we going?","What time is it?","When do we leave?","How long is the trip?","Who is coming?"],c:2}],
+ game:{in:"Pack your bag! Match each travel item to its French name.",pairs:[["Needed at the border","Le passeport"],["Carry your clothes in this","La valise"],["Board the train with this","Le billet"],["Sand, sea and sunshine","La plage"],["Say this to someone departing","Bon voyage\u202f!"]]},
+ poem:{ti:"En route\u202f!",no:"Read with energy \u2014 this is the culmination of your 10-week journey. Bravo to your learners!",li:[["Je fais ma valise avec soin,","I pack my suitcase with care,"],["Mon passeport, mon billet.","My passport, my ticket."],["La plage, la mer, le ciel bleu,","Beach, sea, blue sky,"],["Bon voyage, mes amis\u202f!","Bon voyage, my friends!"]]},
+ tip:"You have made it to Week 10 \u2014 f\u00e9licitations! You now have enough French to survive and thrive as a tourist in France. The best next step: book the trip. Use the language for real.",
+ challenge:"Plan an imaginary trip to France out loud in French. Say where you want to go, when you leave, and what you\u2019ll pack. \u2018Je voudrais aller \u00e0 Paris en juillet. Je fais ma valise\u2026\u2019"}
+];
+
+/* ═══════════════════ STATE ═══════════════════ */
+let cur=0, activeTab={}, flipped={}, quizState={}, gameState={};
+
+/* ═══════════════════ AUTH ═══════════════════ */
+let loggedIn=false;
+function toggleLogin(){if(loggedIn){logout()}else{document.getElementById('modal-wrap').classList.add('open');document.getElementById('uname').focus()}}
+function closeModal(){document.getElementById('modal-wrap').classList.remove('open')}
+function doLogin(){
+  const u=document.getElementById('uname').value.trim();
+  const p=document.getElementById('pw').value.trim();
+  const err=document.getElementById('login-err');
+  if(u==='icer_teacher'&&p==='french2024'){
+    loggedIn=true;
+    document.getElementById('login-btn').textContent='Sign out';
+    document.getElementById('login-btn').classList.add('on');
+    document.getElementById('user-label').textContent='Teacher mode';
+    document.getElementById('user-label').style.display='inline';
+    closeModal();
+  } else {
+    err.style.display='block';
+  }
+}
+function logout(){
+  loggedIn=false;
+  document.getElementById('login-btn').textContent='Teacher login';
+  document.getElementById('login-btn').classList.remove('on');
+  document.getElementById('user-label').style.display='none';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('modal-wrap').classList.contains('open'))doLogin()});
+
+/* ═══════════════════ RENDER ═══════════════════ */
+function getTab(n){return activeTab[n]||'cards'}
+
+function buildWeekBar(){
+  const bar=document.getElementById('week-bar');
+  bar.innerHTML='';
+  WEEKS.forEach((w,i)=>{
+    const b=document.createElement('button');
+    b.className='wb'+(i===0?' on':'');
+    b.textContent=`Week ${w.n}`;
+    b.onclick=()=>{cur=i;document.querySelectorAll('.wb').forEach((el,j)=>el.classList.toggle('on',j===i));renderSheet()};
+    bar.appendChild(b);
+  });
+}
+
+function renderSheet(){
+  const w=WEEKS[cur];
+  const tab=getTab(cur);
+  const main=document.getElementById('main');
+
+  let tabContent='';
+  if(tab==='cards') tabContent=renderCards(w);
+  else if(tab==='quiz') tabContent=renderQuiz(w);
+  else if(tab==='game') tabContent=renderGame(w);
+  else if(tab==='poem') tabContent=renderPoem(w);
+
+  main.innerHTML=`
+  <div class="sheet">
+    <div class="sheet-head">
+      <div class="sh-flag">
+        <div style="flex:1;background:#002395"></div>
+        <div style="flex:1;background:rgba(255,255,255,.3)"></div>
+        <div style="flex:1;background:#ED2939"></div>
+      </div>
+      <div class="sh-badge">ICER FRENCH COURSE BY TAM &bull; WEEK ${w.n} OF 10</div>
+      <div class="sh-title">${w.theme}</div>
+      <div class="sh-loc">${w.loc}</div>
+    </div>
+    <div class="sh-body">
+      <div class="tab-row">
+        <button class="tab${tab==='cards'?' on':''}" onclick="setTab('cards')">Phrase cards</button>
+        <button class="tab${tab==='quiz'?' on':''}" onclick="setTab('quiz')">Quiz</button>
+        <button class="tab${tab==='game'?' on':''}" onclick="setTab('game')">Matching game</button>
+        <button class="tab${tab==='poem'?' on':''}" onclick="setTab('poem')">Song &amp; poem</button>
+      </div>
+      ${tabContent}
+    </div>
+  </div>`;
+}
+
+function setTab(t){activeTab[cur]=t;renderSheet();}
+
+/* ── CARDS ── */
+function renderCards(w){
+  let cards='';
+  w.phrases.forEach((ph,i)=>{
+    const k=cur+'-'+i;
+    const fl=flipped[k]?'f':'';
+    cards+=`<div class="card ${fl}" id="cd${i}" onclick="flipCard(${i})">
+      <div class="cinner">
+        <div class="cfront"><div class="cfr">${ph[0]}</div><div class="cpron">${ph[1]}</div></div>
+        <div class="cback"><div class="cen">${ph[2]}</div><div class="cbh">tap to flip back</div></div>
+      </div></div>`;
+  });
+  let vocab='';
+  w.phrases.forEach(ph=>{vocab+=`<div class="vcard"><span class="vfr">${ph[0]}</span><span class="ven">${ph[2]}</span></div>`;});
+  return `<div class="sec-label">Flip cards &mdash; tap to reveal English</div>
+  <div class="flip-hint">French + pronunciation on the front &mdash; tap to flip and see the English meaning.</div>
+  <div class="cards-grid">${cards}</div>
+  <div class="sec-label" style="margin-top:.5rem">Full vocabulary list</div>
+  <div class="vocab-grid">${vocab}</div>
+  <div style="margin-top:1.25rem">
+    <div class="tip-box"><div class="tip-title">Cultural tip</div><div class="tip-text">${w.tip}</div></div>
+    <div style="margin-top:.85rem"></div>
+    <div class="ch-box"><div class="ch-title">Your week ${w.n} challenge</div><div class="ch-text">${w.challenge}</div></div>
+  </div>`;
+}
+function flipCard(i){
+  const k=cur+'-'+i;
+  flipped[k]=!flipped[k];
+  const el=document.getElementById('cd'+i);
+  if(el) el.classList.toggle('f');
+}
+
+/* ── QUIZ ── */
+function renderQuiz(w){
+  if(!quizState[cur]) quizState[cur]={};
+  const qs=quizState[cur];
+  let cor=0,ans=0;
+  w.quiz.forEach((_,i)=>{if(qs[i]){ans++;if(qs[i].ok)cor++;}});
+  let html='';
+  w.quiz.forEach((q,qi)=>{
+    const done=qs[qi];
+    let cls='q-item'+(done?(done.ok?' correct':' wrong'):'');
+    let opts='';
+    q.o.forEach((o,oi)=>{
+      let ocls='opt';
+      let dis='';
+      if(done){dis='disabled';if(oi===q.c)ocls+=' ok';else if(oi===qs[qi].ch)ocls+=' no';}
+      opts+=`<button class="${ocls}" ${dis} onclick="answerQ(${qi},${oi})">${o}</button>`;
+    });
+    const fb=done?(done.ok?`<div class="q-fb ok">Correct! Bien jou\u00e9 !</div>`:`<div class="q-fb no">Not quite \u2014 the answer is: <strong>${q.o[q.c]}</strong></div>`):'';
+    html+=`<div class="${cls}"><div class="q-num">QUESTION ${qi+1} OF ${w.quiz.length}</div><div class="q-text">${q.q}</div><div class="opts">${opts}</div>${fb}</div>`;
+  });
+  const scoreHtml=ans>0?`<div class="score-bar">Score: ${cor} / ${ans} answered${ans===w.quiz.length?(cor===w.quiz.length?' &mdash; Perfect! F\u00e9licitations !':' &mdash; Quiz complete! Keep practising.'):''}
+  </div>`:'';
+  return `<div class="sec-label">Multiple choice quiz &mdash; 5 questions</div>${html}${scoreHtml}`;
+}
+function answerQ(qi,oi){
+  if(!quizState[cur]) quizState[cur]={};
+  if(quizState[cur][qi]) return;
+  quizState[cur][qi]={ok:oi===WEEKS[cur].quiz[qi].c,ch:oi};
+  renderSheet();
+}
+
+/* ── GAME ── */
+function renderGame(w){
+  if(!gameState[cur]){
+    const ord=w.game.pairs.map((_,i)=>i);
+    for(let i=ord.length-1;i>0;i--){const j=0|Math.random()*(i+1);[ord[i],ord[j]]=[ord[j],ord[i]];}
+    gameState[cur]={matched:new Set(),selL:null,selR:null,errL:null,errR:null,rord:ord};
+  }
+  const gs=gameState[cur];
+  const pairs=w.game.pairs;
+  let left='',right='';
+  pairs.forEach(([clue],i)=>{
+    let cls='gitem';
+    if(gs.matched.has(i))cls+=' mat';
+    else if(gs.errL===i)cls+=' err';
+    else if(gs.selL===i)cls+=' sel';
+    left+=`<div class="${cls}" onclick="selLeft(${i})">${clue}</div>`;
+  });
+  gs.rord.forEach(ri=>{
+    const[,ans]=pairs[ri];
+    let cls='gitem';
+    if(gs.matched.has(ri))cls+=' mat';
+    else if(gs.errR===ri)cls+=' err';
+    else if(gs.selR===ri)cls+=' sel';
+    right+=`<div class="${cls}" onclick="selRight(${ri})">${ans}</div>`;
+  });
+  const m=gs.matched.size,t=pairs.length;
+  const done=m===t?`<div style="text-align:center;margin-top:.75rem;color:var(--green-dk);font-weight:700;font-size:15px">All matched! F\u00e9licitations !</div>`:'';
+  return `<div class="sec-label">Matching game &mdash; ${t} pairs</div>
+  <div class="game-inst">${w.game.in} Click one from each column to match them.</div>
+  <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:.75rem">${m} / ${t} matched</div>
+  <div class="game-grid"><div><h4>Clue</h4>${left}</div><div><h4>French</h4>${right}</div></div>
+  ${done}<button class="reset-btn" onclick="resetGame()">Reset game</button>`;
+}
+function selLeft(i){
+  const gs=gameState[cur];
+  if(!gs||gs.matched.has(i)) return;
+  gs.selL=(gs.selL===i)?null:i;
+  if(gs.selL!==null&&gs.selR!==null)checkMatch();else renderSheet();
+}
+function selRight(ri){
+  const gs=gameState[cur];
+  if(!gs||gs.matched.has(ri)) return;
+  gs.selR=(gs.selR===ri)?null:ri;
+  if(gs.selL!==null&&gs.selR!==null)checkMatch();else renderSheet();
+}
+function checkMatch(){
+  const gs=gameState[cur];
+  const li=gs.selL,ri=gs.selR;
+  gs.selL=null;gs.selR=null;
+  if(li===ri){gs.matched.add(li);renderSheet();}
+  else{gs.errL=li;gs.errR=ri;renderSheet();setTimeout(()=>{delete gs.errL;delete gs.errR;renderSheet();},700);}
+}
+function resetGame(){delete gameState[cur];renderSheet();}
+
+/* ── POEM ── */
+function renderPoem(w){
+  const p=w.poem;
+  let lines='';
+  p.li.forEach(([fr,en])=>{
+    lines+=`<div class="poem-fr">${fr}<span class="poem-en">${en}</span></div>`;
+  });
+  return `<div class="sec-label">Song / poem of the week</div>
+  <div class="poem-box">${lines}</div>
+  <div class="perf-note">Performance note: ${p.no}</div>
+  <div style="margin-top:1rem"></div>
+  <div class="tip-box"><div class="tip-title">Cultural tip</div><div class="tip-text">${w.tip}</div></div>
+  <div style="margin-top:.85rem"></div>
+  <div class="ch-box"><div class="ch-title">Your week ${w.n} challenge</div><div class="ch-text">${w.challenge}</div></div>`;
+}
+
+/* ═══════════════════ INIT ═══════════════════ */
+buildWeekBar();
+renderSheet();
+</script>
+</body>
+</html>
 
