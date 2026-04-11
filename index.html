@@ -14,6 +14,20 @@
   --gray:#f7f8fa;--border:#e0e0e0;--text:#1a1a2e;--muted:#666;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:var(--text);min-height:100vh}
+#gate{position:fixed;inset:0;background:#002395;z-index:999;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+#gate.hidden{display:none}
+.gate-box{background:#fff;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:400px;text-align:center}
+.gate-flag{display:flex;height:5px;border-radius:3px;overflow:hidden;width:60px;margin:0 auto 1.5rem}
+.gate-title{font-size:22px;font-weight:800;color:#002395;margin-bottom:4px}
+.gate-by{font-size:13px;color:#ED2939;font-weight:700;letter-spacing:.05em;margin-bottom:.75rem}
+.gate-sub{font-size:13px;color:#888;line-height:1.6;margin-bottom:1.5rem}
+.gate-label{font-size:11px;font-weight:700;color:#555;letter-spacing:.06em;text-align:left;display:block;margin-bottom:6px}
+.gate-input{width:100%;padding:12px 14px;border:2px solid #ddd;border-radius:10px;font-size:16px;font-family:inherit;outline:none;text-align:center;letter-spacing:.08em;transition:border .2s;margin-bottom:.75rem}
+.gate-input:focus{border-color:#002395}
+.gate-btn{width:100%;padding:13px;background:#002395;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .2s}
+.gate-btn:hover{background:#0C447C}
+.gate-err{font-size:13px;color:#ED2939;margin-bottom:.75rem;display:none;font-weight:600}
+.gate-hint{font-size:11px;color:#bbb;margin-top:1rem;line-height:1.5}
 
 /* ── NAV ── */
 #topbar{background:var(--blue);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
@@ -50,9 +64,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:va
 
 /* ── WEEK SELECTOR ── */
 #week-bar{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:56px;z-index:90}
-.wb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .2s}
-.wb:hover:not(.on){background:var(--lt);border-color:var(--mid);color:var(--dark)}
+.wb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:5px}
+.wb.locked{background:#f5f5f5;border-color:#e0e0e0;color:#bbb;cursor:pointer}
+.wb.locked:hover{background:#EAF3DE;border-color:#3B6D11;color:#27500A}
 .wb.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.lock-icon{font-size:11px}
+.unlock-icon{font-size:11px}
+/* week unlock modal */
+#wk-modal{display:none;position:fixed;inset:0;background:rgba(0,35,149,.6);z-index:300;align-items:center;justify-content:center;padding:1rem}
+#wk-modal.open{display:flex}
+.wk-box{background:#fff;border-radius:14px;padding:2rem 1.75rem;width:100%;max-width:380px;text-align:center}
+.wk-flag{display:flex;height:4px;border-radius:2px;overflow:hidden;width:50px;margin:0 auto 1.1rem}
+.wk-title{font-size:17px;font-weight:800;color:#002395;margin-bottom:.25rem}
+.wk-sub{font-size:13px;color:#888;margin-bottom:1.25rem;line-height:1.55}
+.wk-input{width:100%;padding:11px 14px;border:2px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;text-align:center;letter-spacing:.07em;outline:none;transition:border .2s;margin-bottom:.65rem}
+.wk-input:focus{border-color:#002395}
+.wk-btn{width:100%;padding:11px;background:#002395;color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.wk-btn:hover{background:#0C447C}
+.wk-err{font-size:12px;color:#ED2939;margin-bottom:.6rem;display:none;font-weight:600}
+.wk-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;margin-top:-6px}
+.wk-hint{font-size:11px;color:#bbb;margin-top:.85rem;line-height:1.5}
 
 /* ── MAIN CONTENT ── */
 #main{max-width:900px;margin:1.5rem auto;padding:0 1rem 3rem}
@@ -154,6 +185,25 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:va
 </head>
 <body>
 
+<!-- STUDENT GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-flag">
+      <div style="flex:1;background:#002395"></div>
+      <div style="flex:1;background:#ddd"></div>
+      <div style="flex:1;background:#ED2939"></div>
+    </div>
+    <div class="gate-title">ICER French Language Course</div>
+    <div class="gate-by">by Tam</div>
+    <div class="gate-sub">Welcome! Please enter your enrolment code to access the course. You will have received this from Tam when you registered.</div>
+    <label class="gate-label">ENROLMENT CODE</label>
+    <input id="gate-input" class="gate-input" type="text" placeholder="Enter your code" autocomplete="off" autocapitalize="off">
+    <div id="gate-err" class="gate-err">Incorrect code — please check with Tam and try again.</div>
+    <button class="gate-btn" onclick="checkGate()">Enter the course</button>
+    <div class="gate-hint">Don't have a code yet? Contact Tam to register for the ICER French Beginners Course.</div>
+  </div>
+</div>
+
 <!-- TOP BAR -->
 <div id="topbar">
   <div style="display:flex;align-items:center;gap:10px">
@@ -203,6 +253,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:va
 </div>
 
 <!-- WEEK BAR -->
+<!-- WEEK UNLOCK MODAL -->
+<div id="wk-modal">
+  <div class="wk-box">
+    <button class="wk-close" onclick="closeWkModal()">&#10005;</button>
+    <div class="wk-flag">
+      <div style="flex:1;background:#002395"></div>
+      <div style="flex:1;background:#ddd"></div>
+      <div style="flex:1;background:#ED2939"></div>
+    </div>
+    <div class="wk-title" id="wk-modal-title">Unlock Week 2</div>
+    <div class="wk-sub">This week is locked. Enter the code Tam gave you at the end of your last lesson to continue your journey.</div>
+    <input id="wk-input" class="wk-input" type="text" placeholder="Enter week code" autocomplete="off" autocapitalize="off">
+    <div id="wk-err" class="wk-err">Incorrect code — check with Tam and try again.</div>
+    <button class="wk-btn" onclick="checkWkCode()">Unlock this week</button>
+    <div class="wk-hint">Codes are given out by Tam at the end of each lesson. Complete each week to unlock the next.</div>
+  </div>
+</div>
+
 <div id="week-bar"></div>
 
 <!-- MAIN -->
@@ -237,7 +305,7 @@ const WEEKS=[
  phrases:[["Un caf\u00e9, s\u2019il vous pla\u00eet","Uhn kah-fay, seel voo play","A coffee, please"],["Un croissant","Uhn kwah-sahn","A croissant"],["Je voudrais\u2026","Zhuh voo-dray","I would like\u2026"],["C\u2019est combien\u202f?","Say kohm-byahn","How much is it?"],["L\u2019addition, s\u2019il vous pla\u00eet","Lah-dee-syohn seel voo play","The bill, please"],["La carte","Lah kart","The menu"],["Du beurre","D\u00fc buhr","Some butter"],["Avec plaisir !","Ah-vek play-zeer","With pleasure!"]],
  quiz:[{q:"How do you order \u2018a coffee\u2019 in French?",o:["Un th\u00e9","Un caf\u00e9","Un jus","Du pain","De l\u2019eau"],c:1},{q:"What does \u2018Je voudrais\u2019 mean?",o:["I don\u2019t want","I have","I would like","I need","I eat"],c:2},{q:"How do you ask for the bill?",o:["La carte, s\u2019il vous pla\u00eet","C\u2019est combien?","L\u2019addition, s\u2019il vous pla\u00eet","Au revoir","Je voudrais payer"],c:2},{q:"What is \u2018du beurre\u2019?",o:["Some wine","Some water","Some bread","Some butter","Some jam"],c:3},{q:"What does \u2018La carte\u2019 mean?",o:["The bill","The waiter","The menu","The coffee","The table"],c:2}],
  game:{in:"Match the clue to its French caf\u00e9 word.",pairs:[["Strong espresso in a small cup","Un caf\u00e9"],["Flaky buttery pastry","Un croissant"],["Spread this on your bread","Du beurre"],["Ask this to see the dishes","La carte"],["Say this to pay and leave","L\u2019addition"]]},
- poem:{ti:"\u00c0 la boulangerie",no:"Sing gently like a morning lullaby. Emphasise the rhythm on \u2018caf\u00e9\u2019 and \u2018croissant\u2019.",li:[["Un caf\u00e9, s\u2019il vous pla\u00eet,","A coffee, please,"],["Chaud et fort le matin.","Hot and strong in the morning."],["Un croissant au beurre,","A butter croissant,"],["Dor\u00e9 et tr\u00e8s fin.","Golden and very fine."]]},
+ poem:{ti:"\u00c0 la boulangerie",no:"Sing gently like a morning lullaby. Emphasise the rhythm on \u2018caf\u00e9\u2019 and \u2018croissant\u2019.",li:[["Un caf\u00e9, s\u2019il vous pla\u00eet,","A coffee, please,"],["Chaud et fort le matin.","Hot and strong in the morning."],["Un croissant au beurre,","A butter croissant,"],["Dor\u00e9 et tr\u00e8s fin.","Golden and very thin."]]},
  tip:"In France, un caf\u00e9 means a small espresso. For a large white coffee ask for un caf\u00e9 cr\u00e8me. Never ask for un caf\u00e9 au lait in a caf\u00e9 \u2014 that is considered a home drink!",
  challenge:"Order your next coffee or tea \u2014 even at home \u2014 in French. Say: \u2018Je voudrais un caf\u00e9, s\u2019il vous pla\u00eet.\u2019 Then add: \u2018C\u2019est combien?\u2019"},
 
@@ -331,14 +399,33 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementB
 /* ═══════════════════ RENDER ═══════════════════ */
 function getTab(n){return activeTab[n]||'cards'}
 
+function isUnlocked(n){
+  if(n===1) return true;
+  return sessionStorage.getItem('icer_week_'+n)==='unlocked';
+}
+
 function buildWeekBar(){
   const bar=document.getElementById('week-bar');
   bar.innerHTML='';
   WEEKS.forEach((w,i)=>{
+    const unlocked=isUnlocked(w.n);
     const b=document.createElement('button');
-    b.className='wb'+(i===0?' on':'');
-    b.textContent=`Week ${w.n}`;
-    b.onclick=()=>{cur=i;document.querySelectorAll('.wb').forEach((el,j)=>el.classList.toggle('on',j===i));renderSheet()};
+    b.className='wb'+(i===0?' on':'')+(unlocked?'':' locked');
+    b.innerHTML=unlocked
+      ? `<span class="unlock-icon">&#9312;</span> Week ${w.n}`.replace('&#9312;','')+ `Week ${w.n}`
+      : `<span class="lock-icon">&#128274;</span> Week ${w.n}`;
+    b.innerHTML = unlocked
+      ? `Week ${w.n}`
+      : `&#128274; Week ${w.n}`;
+    b.onclick=()=>{
+      if(isUnlocked(w.n)){
+        cur=i;
+        document.querySelectorAll('.wb').forEach((el,j)=>el.classList.toggle('on',j===i));
+        renderSheet();
+      } else {
+        openWkModal(w.n);
+      }
+    };
     bar.appendChild(b);
   });
 }
@@ -513,10 +600,78 @@ function renderPoem(w){
   <div class="ch-box"><div class="ch-title">Your week ${w.n} challenge</div><div class="ch-text">${w.challenge}</div></div>`;
 }
 
+/* ═══════════════════ STUDENT GATE ═══════════════════ */
+const STUDENT_CODE='FrenchTam2025';
+const WEEK_CODES={
+  2:'BONJOUR2',
+  3:'CROISSANT3',
+  4:'FAMILLE4',
+  5:'PARIS5',
+  6:'MARCHE6',
+  7:'SOLEIL7',
+  8:'MATIN8',
+  9:'WEEKEND9',
+  10:'VOYAGE10'
+};
+
+function checkGate(){
+  const val=document.getElementById('gate-input').value.trim();
+  const err=document.getElementById('gate-err');
+  if(val.toUpperCase()===STUDENT_CODE.toUpperCase()){
+    sessionStorage.setItem('icer_access','granted');
+    document.getElementById('gate').classList.add('hidden');
+    err.style.display='none';
+    buildWeekBar();
+  } else {
+    err.style.display='block';
+    document.getElementById('gate-input').focus();
+  }
+}
+
+let pendingWeek=null;
+function openWkModal(n){
+  pendingWeek=n;
+  document.getElementById('wk-modal-title').textContent=`Unlock Week ${n}`;
+  document.getElementById('wk-input').value='';
+  document.getElementById('wk-err').style.display='none';
+  document.getElementById('wk-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('wk-input').focus(),100);
+}
+function closeWkModal(){
+  document.getElementById('wk-modal').classList.remove('open');
+  pendingWeek=null;
+}
+function checkWkCode(){
+  const val=document.getElementById('wk-input').value.trim();
+  const err=document.getElementById('wk-err');
+  const correct=WEEK_CODES[pendingWeek];
+  if(correct&&val.toUpperCase()===correct.toUpperCase()){
+    sessionStorage.setItem('icer_week_'+pendingWeek,'unlocked');
+    closeWkModal();
+    cur=pendingWeek-1;
+    buildWeekBar();
+    renderSheet();
+  } else {
+    err.style.display='block';
+    document.getElementById('wk-input').focus();
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(!document.getElementById('gate').classList.contains('hidden')) checkGate();
+    else if(document.getElementById('wk-modal').classList.contains('open')) checkWkCode();
+    else if(document.getElementById('modal-wrap').classList.contains('open')) doLogin();
+  }
+});
+
+if(sessionStorage.getItem('icer_access')==='granted'){
+  document.getElementById('gate').classList.add('hidden');
+}
+
 /* ═══════════════════ INIT ═══════════════════ */
 buildWeekBar();
 renderSheet();
 </script>
 </body>
 </html>
-
